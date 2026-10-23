@@ -1,0 +1,12 @@
+node_modules/
+.env
+npm-debug.log*
+.DS_Store
+auth.json
+data/
+test_data/
+*.jsonl
+.batch-*
+.iteration-*
+.tmp-*
+real-test-*.json
