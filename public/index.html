@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>生鲜视频群文案工作台</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">社区生鲜超市</p>
+        <h1>视频群文案工作台</h1>
+      </div>
+      <div class="status" id="statusText">待上传视频</div>
+    </header>
+
+    <main class="workspace">
+      <section class="panel source-panel" aria-labelledby="sourceTitle">
+        <div class="panel-title">
+          <div>
+            <p class="eyebrow">素材</p>
+            <h2 id="sourceTitle">今日到货视频</h2>
+          </div>
+          <button class="icon-button" type="button" id="clearButton" title="清空">
+            <i data-lucide="rotate-ccw"></i>
+          </button>
+        </div>
+
+        <label class="file-drop" for="videoInput" id="dropZone">
+          <input id="videoInput" type="file" accept="audio/*,video/*" />
+          <i data-lucide="upload-cloud"></i>
+          <span>选择视频或音频</span>
+          <small>视频优先；MP4、MOV、M4A、MP3、WAV、WEBM；建议 25MB 内</small>
+        </label>
+
+        <video class="preview" id="videoPreview" controls hidden></video>
+        <audio class="preview" id="audioPreview" controls hidden></audio>
+
+        <div class="actions">
+          <button class="primary" type="button" id="analyzeButton">
+            <i data-lucide="eye"></i>
+            分析画面
+          </button>
+          <button class="secondary" type="button" id="transcribeButton">
+            <i data-lucide="captions"></i>
+            转写语音
+          </button>
+          <button class="secondary" type="button" id="localDraftButton">
+            <i data-lucide="wand-sparkles"></i>
+            本地草稿
+          </button>
+        </div>
+
+        <div class="frame-strip" id="frameStrip" aria-label="视频关键帧"></div>
+
+        <label class="field">
+          <span>画面分析（主依据）</span>
+          <textarea id="visualInput" rows="8" placeholder="点击“分析画面”后，这里会总结视频里看见的水果、成色、包装和可写卖点。也可以手动修改。"></textarea>
+        </label>
+
+        <label class="field">
+          <span>语音转写（辅助）</span>
+          <textarea id="transcriptInput" rows="5" placeholder="语音主要用于补充价格、口感、规格、配送规则。"></textarea>
+        </label>
+      </section>
+
+      <section class="panel control-panel" aria-labelledby="controlTitle">
+        <div class="panel-title">
+          <div>
+            <p class="eyebrow">参数</p>
+            <h2 id="controlTitle">文案口径</h2>
+          </div>
+        </div>
+
+        <label class="field">
+          <span>今日补充</span>
+          <textarea id="notesInput" rows="7" placeholder="例：阳光玫瑰 19.8/斤，脆甜；云南蓝莓 2盒29.9；榴莲今天熟度好；下午 5 点前可送。"></textarea>
+        </label>
+
+        <div class="form-grid">
+          <label class="field">
+            <span>群类型</span>
+            <select id="groupTypeInput">
+              <option>社区居民微信群</option>
+              <option>老顾客精品水果群</option>
+              <option>宝妈家庭采购群</option>
+              <option>办公室团购群</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>风格</span>
+            <select id="toneInput">
+              <option>亲切、真实、有烟火气</option>
+              <option>简洁、清楚、适合快速下单</option>
+              <option>偏精品、有品质感但不浮夸</option>
+              <option>促销感强、库存有限、催单克制</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="field">
+          <span>配送口径</span>
+          <input id="deliveryInput" value="周边小区可配送" />
+        </label>
+
+        <label class="field">
+          <span>禁忌</span>
+          <input id="tabooInput" value="不写医疗功效，不编造价格，不说全网最低，不夸大产地。" />
+        </label>
+
+        <div class="note-box">
+          <i data-lucide="info"></i>
+          <p>先分析画面再生成，会复用画面摘要以节省成本；价格、产地、口感只从清晰标签、语音或补充信息里取。</p>
+        </div>
+
+        <div class="cost-box">
+          <div>
+            <span>本条视频估算成本</span>
+            <strong id="costTotal">￥0.0000 / $0.0000</strong>
+          </div>
+          <p id="costDetail">还没有调用 AI。成本会按抽帧图片、文字 token 和转写分钟数累计。</p>
+        </div>
+
+        <button class="primary generate" type="button" id="generateButton">
+          <i data-lucide="sparkles"></i>
+          生成微信群文案
+        </button>
+      </section>
+
+      <section class="panel output-panel" aria-labelledby="outputTitle">
+        <div class="panel-title">
+          <div>
+            <p class="eyebrow">输出</p>
+            <h2 id="outputTitle">可复制文案</h2>
+          </div>
+        </div>
+
+        <div class="output-list" id="outputList">
+          <div class="empty-state">
+            <i data-lucide="message-square-text"></i>
+            <p>生成后会显示 3 版可直接群发的促销文案。</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <template id="variantTemplate">
+      <article class="copy-block">
+        <div class="copy-head">
+          <div>
+            <h3></h3>
+            <span></span>
+          </div>
+          <button class="icon-button copy-button" type="button" title="复制">
+            <i data-lucide="copy"></i>
+          </button>
+        </div>
+        <p></p>
+      </article>
+    </template>
+
+    <template id="listTemplate">
+      <article class="copy-block compact">
+        <div class="copy-head">
+          <div>
+            <h3></h3>
+          </div>
+          <button class="icon-button copy-button" type="button" title="复制全部">
+            <i data-lucide="copy"></i>
+          </button>
+        </div>
+        <ul></ul>
+      </article>
+    </template>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>
