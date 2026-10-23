@@ -1,0 +1,16 @@
+{
+  "name": "fresh-market-copywriter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.mjs",
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "multer": "^2.0.0",
+    "openai": "^6.34.0"
+  }
+}
